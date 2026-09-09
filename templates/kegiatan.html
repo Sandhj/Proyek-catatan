@@ -3,81 +3,405 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Catatan Kegiatan</title>
-    <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icon-192.png">
     <style>
-        /* CSS Sama dengan index.html */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 10px; font-size: 14px; }
-        .container { max-width: 100%; margin: 0 auto; }
-        h1 { text-align: center; color: white; margin-bottom: 15px; font-size: 1.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
-        .nav-menu { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; flex-wrap: wrap; }
-        .nav-btn { padding: 8px 15px; background: white; color: #667eea; border: none; border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s; text-decoration: none; box-shadow: 0 2px 10px rgba(0,0,0,0.2); }
-        .nav-btn:hover, .nav-btn:active { transform: translateY(-1px); box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .nav-btn.active { background: #667eea; color: white; }
-        .form-card { background: white; border-radius: 12px; padding: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); margin-bottom: 15px; }
-        .form-card h2 { font-size: 1.2em; margin-bottom: 12px; color: #667eea; }
-        .form-group { margin-bottom: 12px; }
-        label { display: block; margin-bottom: 5px; color: #333; font-weight: 600; font-size: 12px; }
-        input[type="text"], input[type="date"], select { width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 6px; font-size: 13px; transition: border-color 0.3s; -webkit-appearance: none; }
-        input[type="text"]:focus, input[type="date"]:focus, select:focus { outline: none; border-color: #667eea; }
-        
-        .file-upload-wrapper { margin-top: 5px; }
-        .btn-upload { width: 100%; padding: 12px; border: 2px dashed #667eea; border-radius: 8px; background: #f8f9ff; cursor: pointer; text-align: center; font-size: 13px; font-weight: 600; color: #667eea; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-upload:hover { background: #eef0ff; }
-        .btn-upload.has-file { background: #d4edda; border-color: #28a745; color: #155724; }
-        .btn-upload input[type="file"] { display: none; }
-        .file-name-display { margin-top: 8px; font-size: 11px; color: #28a745; font-weight: bold; text-align: center; display: none; }
-        .file-name-display.show { display: block; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
 
-        .btn-submit { width: 100%; padding: 12px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; margin-top: 10px; }
-        .btn-submit:hover, .btn-submit:active { transform: translateY(-1px); box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4); }
-        .flash-messages { position: fixed; top: 10px; right: 10px; z-index: 1000; max-width: 300px; }
-        .flash-message { padding: 10px 15px; margin-bottom: 8px; border-radius: 6px; color: white; font-weight: 600; font-size: 12px; animation: slideIn 0.3s ease-out; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .flash-success { background: #2ed573; }
-        .flash-error { background: #ff4757; }
-        @keyframes slideIn { from { transform: translateX(400px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
-        .modal-overlay.active { display: flex; }
-        .modal-content { background: white; border-radius: 12px; padding: 20px; max-width: 350px; width: 100%; text-align: center; animation: modalPop 0.3s ease-out; }
-        @keyframes modalPop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .modal-title { font-size: 18px; margin-bottom: 10px; color: #333; }
-        .modal-message { font-size: 14px; margin-bottom: 20px; color: #666; }
-        .modal-buttons { display: flex; gap: 10px; justify-content: center; }
-        .modal-btn { padding: 8px 20px; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-        .modal-btn-cancel { background: #e0e0e0; color: #333; }
-        .modal-btn-confirm { background: #ff4757; color: white; }
-        .modal-btn-ok { background: #667eea; color: white; }
-        
-        .image-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 3000; justify-content: center; align-items: center; }
-        .image-modal.active { display: flex; }
-        .image-modal img { max-width: 95%; max-height: 95%; border-radius: 8px; }
-        .image-modal-close { position: absolute; top: 15px; right: 20px; font-size: 35px; color: white; cursor: pointer; background: none; border: none; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        /* Navigation */
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            padding: 8px 15px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:hover, .nav-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .nav-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            margin-bottom: 15px;
+        }
+
+        .form-card h2 {
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            color: #667eea;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        input[type="text"],
+        input[type="date"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: border-color 0.3s;
+            -webkit-appearance: none;
+        }
+
+        input[type="text"]:focus,
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .file-input-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .file-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px dashed #667eea;
+            border-radius: 6px;
+            background: #f8f9ff;
+            cursor: pointer;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .file-btn:hover, .file-btn:active {
+            background: #667eea;
+            color: white;
+        }
+
+        .file-btn.has-file {
+            background: #2ed573;
+            border-color: #2ed573;
+            color: white;
+        }
+
+        .file-btn input[type="file"] {
+            display: none;
+        }
+
+        .file-indicator {
+            display: none;
+            margin-top: 8px;
+            padding: 8px;
+            background: #d4edda;
+            border: 1px solid #2ed573;
+            border-radius: 6px;
+            color: #155724;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .file-indicator.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+
+        .btn-submit:hover, .btn-submit:active {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Flash Messages */
+        .flash-messages {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            max-width: 300px;
+        }
+
+        .flash-message {
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            animation: slideIn 0.3s ease-out;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .flash-success {
+            background: #2ed573;
+        }
+
+        .flash-error {
+            background: #ff4757;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Custom Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 350px;
+            width: 100%;
+            text-align: center;
+            animation: modalPop 0.3s ease-out;
+        }
+
+        @keyframes modalPop {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-title {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .modal-message {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .modal-btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .modal-btn-cancel:hover, .modal-btn-cancel:active {
+            background: #d0d0d0;
+        }
+
+        .modal-btn-confirm {
+            background: #ff4757;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover, .modal-btn-confirm:active {
+            background: #ff3344;
+        }
+
+        .modal-btn-ok {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-btn-ok:hover, .modal-btn-ok:active {
+            background: #5568d3;
+        }
+
+        /* Image Preview Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .image-modal img {
+            max-width: 95%;
+            max-height: 95%;
+            border-radius: 8px;
+        }
+
+        .image-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 35px;
+            color: white;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
 
         @media (max-width: 480px) {
-            body { padding: 8px; font-size: 13px; }
-            h1 { font-size: 1.3em; margin-bottom: 10px; }
-            .nav-menu { gap: 8px; margin-bottom: 10px; }
-            .nav-btn { padding: 7px 12px; font-size: 11px; }
-            .form-card { padding: 12px; margin-bottom: 10px; }
-            .form-card h2 { font-size: 1.1em; }
+            body {
+                padding: 8px;
+                font-size: 13px;
+            }
+
+            h1 {
+                font-size: 1.3em;
+                margin-bottom: 10px;
+            }
+
+            .nav-menu {
+                gap: 8px;
+                margin-bottom: 10px;
+            }
+
+            .nav-btn {
+                padding: 7px 12px;
+                font-size: 11px;
+            }
+
+            .form-card {
+                padding: 12px;
+                margin-bottom: 10px;
+            }
+
+            .form-card h2 {
+                font-size: 1.1em;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🎯 Catatan Kegiatan</h1>
+        
+        <!-- Navigation -->
         <div class="nav-menu">
             <a href="/" class="nav-btn">📝 Pembelian</a>
             <a href="/kegiatan" class="nav-btn active">🎯 Kegiatan</a>
             <a href="/riwayat" class="nav-btn">📋 Riwayat</a>
         </div>
         
+        <!-- Flash Messages -->
         <div class="flash-messages" id="flashMessages">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -88,6 +412,7 @@
             {% endwith %}
         </div>
         
+        <!-- Form Input -->
         <div class="form-card">
             <h2>Tambah Kegiatan Baru</h2>
             <form action="/add-kegiatan" method="POST" enctype="multipart/form-data" id="kegiatanForm">
@@ -95,25 +420,38 @@
                     <label for="tanggal">Tanggal *</label>
                     <input type="date" id="tanggal" name="tanggal" required>
                 </div>
+                
                 <div class="form-group">
                     <label for="nama_kegiatan">Nama Kegiatan *</label>
                     <input type="text" id="nama_kegiatan" name="nama_kegiatan" placeholder="Masukkan nama kegiatan" required>
                 </div>
+                
                 <div class="form-group">
-                    <label>Foto Dokumentasi (Upload File)</label>
-                    <div class="file-upload-wrapper">
-                        <label class="btn-upload" id="btnUploadLabel">
-                            📁 Pilih Foto dari Galeri/File
+                    <label>Foto Dokumentasi</label>
+                    <div class="file-input-group">
+                        <label class="file-btn" id="btnUpload">
+                            📁 Upload
                             <input type="file" name="foto" accept="image/*" id="fotoUpload">
                         </label>
-                        <div class="file-name-display" id="fileNameDisplay"></div>
+                        <label class="file-btn" id="btnCamera">
+                            📷 Kamera
+                            <input type="file" name="foto" accept="image/*" capture="environment" id="fotoCamera">
+                        </label>
                     </div>
+                    <div class="file-indicator" id="fileIndicator">
+                        ✅ Foto berhasil dipilih: <span id="fileName"></span>
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 5px; font-size: 11px;">
+                        Pilih salah satu metode
+                    </small>
                 </div>
+                
                 <button type="submit" class="btn-submit">💾 Simpan Kegiatan</button>
             </form>
         </div>
     </div>
     
+    <!-- Custom Confirm Modal -->
     <div class="modal-overlay" id="confirmModal">
         <div class="modal-content">
             <div class="modal-title">⚠️ Konfirmasi</div>
@@ -125,6 +463,7 @@
         </div>
     </div>
     
+    <!-- Custom Alert Modal -->
     <div class="modal-overlay" id="alertModal">
         <div class="modal-content">
             <div class="modal-title" id="alertTitle">ℹ️ Informasi</div>
@@ -135,60 +474,106 @@
         </div>
     </div>
     
+    <!-- Image Preview Modal -->
     <div class="image-modal" id="imageModal" onclick="closeImageModal()">
         <button class="image-modal-close">&times;</button>
         <img id="imageModalImg" src="" alt="Preview">
     </div>
     
     <script>
+        // Set default date to today
         document.getElementById('tanggal').valueAsDate = new Date();
         
+        // Handle file input - only one file at a time
         const fotoUpload = document.getElementById('fotoUpload');
-        const btnUploadLabel = document.getElementById('btnUploadLabel');
-        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const fotoCamera = document.getElementById('fotoCamera');
+        const btnUpload = document.getElementById('btnUpload');
+        const btnCamera = document.getElementById('btnCamera');
+        const fileIndicator = document.getElementById('fileIndicator');
+        const fileName = document.getElementById('fileName');
+        
+        function showFileIndicator(name) {
+            fileName.textContent = name;
+            fileIndicator.classList.add('show');
+        }
+        
+        function hideFileIndicator() {
+            fileIndicator.classList.remove('show');
+            btnUpload.classList.remove('has-file');
+            btnCamera.classList.remove('has-file');
+        }
         
         fotoUpload.addEventListener('change', function() {
             if (this.files.length > 0) {
-                btnUploadLabel.classList.add('has-file');
-                btnUploadLabel.innerHTML = '✅ Foto Terpilih';
-                fileNameDisplay.textContent = this.files[0].name;
-                fileNameDisplay.classList.add('show');
+                fotoCamera.value = '';
+                btnCamera.classList.remove('has-file');
+                btnUpload.classList.add('has-file');
+                showFileIndicator(this.files[0].name);
             } else {
-                btnUploadLabel.classList.remove('has-file');
-                btnUploadLabel.innerHTML = '📁 Pilih Foto dari Galeri/File';
-                fileNameDisplay.classList.remove('show');
+                hideFileIndicator();
             }
         });
         
+        fotoCamera.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fotoUpload.value = '';
+                btnUpload.classList.remove('has-file');
+                btnCamera.classList.add('has-file');
+                showFileIndicator(this.files[0].name);
+            } else {
+                hideFileIndicator();
+            }
+        });
+        
+        // Custom Alert Function
         function customAlert(message, title = 'Informasi') {
             document.getElementById('alertTitle').textContent = title;
             document.getElementById('alertMessage').textContent = message;
             document.getElementById('alertModal').classList.add('active');
         }
-        function closeAlertModal() { document.getElementById('alertModal').classList.remove('active'); }
         
+        function closeAlertModal() {
+            document.getElementById('alertModal').classList.remove('active');
+        }
+        
+        // Custom Confirm Function
         let confirmCallback = null;
+        
         function confirmDelete(url, message) {
             document.getElementById('confirmMessage').textContent = message;
             document.getElementById('confirmModal').classList.add('active');
-            confirmCallback = function() { window.location.href = url; };
+            
+            confirmCallback = function() {
+                window.location.href = url;
+            };
+            
             document.getElementById('confirmBtn').onclick = function() {
-                if (confirmCallback) confirmCallback();
+                if (confirmCallback) {
+                    confirmCallback();
+                }
                 closeConfirmModal();
             };
         }
+        
         function closeConfirmModal() {
             document.getElementById('confirmModal').classList.remove('active');
             confirmCallback = null;
         }
         
+        // Image Modal Functions
         function showImageModal(src) {
             document.getElementById('imageModalImg').src = src;
             document.getElementById('imageModal').classList.add('active');
         }
-        function closeImageModal() { document.getElementById('imageModal').classList.remove('active'); }
         
+        function closeImageModal() {
+            document.getElementById('imageModal').classList.remove('active');
+        }
+        
+        // Override default alert and confirm
         window.alert = customAlert;
+        
+        // Auto-hide flash messages after 3 seconds
         setTimeout(function() {
             const flashMessages = document.getElementById('flashMessages');
             if (flashMessages) {
@@ -198,6 +583,7 @@
             }
         }, 3000);
         
+        // Form validation
         document.getElementById('kegiatanForm').addEventListener('submit', function(e) {
             const namaKegiatan = document.getElementById('nama_kegiatan').value.trim();
             if (!namaKegiatan) {
@@ -206,9 +592,12 @@
             }
         });
         
+        // Close modals with Escape key
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                closeConfirmModal(); closeAlertModal(); closeImageModal();
+                closeConfirmModal();
+                closeAlertModal();
+                closeImageModal();
             }
         });
     </script>
